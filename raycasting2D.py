@@ -1,7 +1,15 @@
 import pygame
 from pygame.locals import *
 
-#class Source:
+class Source:
+    def __init__(self):
+        self.position = pygame.mouse.get_pos()
+
+    def update(self):
+        self.position = pygame.mouse.get_pos()
+
+    def show(self):
+        pygame.draw.circle(user_interface.window, (255, 255, 255), self.position, 5)
 
 class Ray:
     def __init__(self, position, direction):
@@ -10,6 +18,9 @@ class Ray:
 
     #def showSource(self):
     #    pygame.draw.circle(user_interface.window, (255, 255, 255), self.position, 5) 
+
+    def update(self):
+        self.position = source.position
 
     def getT1(self, obstacle):
         if (self.direction[0] * obstacle.direction[1]) - (self.direction[1] * obstacle.direction[0]) == 0:
@@ -24,23 +35,6 @@ class Ray:
         l = [self.getT1(obstacle) for obstacle in boundaries] 
         T1 = min([self.getT1(obstacle) for obstacle in boundaries if self.getT1(obstacle) != None])
         pygame.draw.line(user_interface.window, (255, 255, 0), self.position, (self.position[0] + T1 * self.direction[0], self.position[1] + T1 * self.direction[1]))
-
-"""
-    def getT1(self, obstacle):
-        x1, y1 = self.position 
-        v1 = self.direction
-        x2, y2 = obstacle.position
-        v2 = obstacle.direction 
-        denominator = v1[0] * v2[1] - (v1[1] * v2[0])
-        if denominator == 0:
-            return None 
-        T1 = ((x1 - x2) * (-v2[1])) + ((y1 - y2) * v2[0]) / denominator 
-        T2 = (v1[0] * (y1 - y2)) - (v1[1] * (x1 - x2)) / denominator 
-        print(T1, T2)
-        if T1 <= 0:
-            return None
-        return T1
-"""
 
 class Boundary:
     def __init__(self, a, b):
@@ -70,9 +64,12 @@ class UserInterface:
 
     def render(self):
         self.window.fill((0, 0, 0))
+        source.update()
+        source.show()
         for boundary in boundaries:
             boundary.show()
         for ray in rays:
+            ray.update()
             ray.show()
         pygame.display.update()
 
@@ -84,6 +81,7 @@ class UserInterface:
             self.clock.tick(60)
 
 user_interface = UserInterface()
+source = Source()
 boundary = Boundary((600, 500), (600, 600))
 boundary2 = Boundary((400, 500), (400, 600))
 ray = Ray((200, 400), (1, 0))
