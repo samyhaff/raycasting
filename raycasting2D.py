@@ -1,5 +1,7 @@
 import pygame
+import random 
 from pygame.locals import *
+from numpy import cos, sin, pi, linspace
 
 class Source:
     def __init__(self):
@@ -80,12 +82,12 @@ class UserInterface:
             self.render()
             self.clock.tick(60)
 
+
 user_interface = UserInterface()
 source = Source()
 boundary = Boundary((600, 500), (600, 600))
 boundary2 = Boundary((400, 500), (400, 600))
-ray = Ray((200, 400), (1, 0))
-boundaries = [boundary, boundary2, Boundary((800, 0), (800, 800)), Boundary((0, 0), (800, 0)), Boundary((0, 0), (0, 800)), Boundary((0, 800), (800, 800))]
-rays = [ray]
+boundaries = [Boundary((random.randint(0, 800), random.randint(0, 800)), (random.randint(0,800), random.randint(0,800))) for i in range(10)] + [Boundary((800, 0), (800, 800)), Boundary((0, 0), (800, 0)), Boundary((0, 0), (0, 800)), Boundary((0, 800), (800, 800))]
+rays = [Ray((400, 400), (cos(i), sin(i))) for i in linspace(0, 2 * pi, 100)]
 user_interface.run()
 pygame.quit()
